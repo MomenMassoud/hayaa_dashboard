@@ -70,7 +70,13 @@ class DashBoardView extends StatelessWidget {
           child: Tab(text: 'Badges'),
         ),
       ),
-
+      const RotatedBox(
+        quarterTurns: 3,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 80),
+          child: Tab(text: 'Store'),
+        ),
+      ),
     ];
     return DefaultTabController(
       length: myTabs.length,

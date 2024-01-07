@@ -1,4 +1,5 @@
 import 'package:dashboard/featurs/dashboard/views/badge_details_view.dart';
+import 'package:dashboard/featurs/dashboard/views/store_details_view.dart';
 import 'package:dashboard/featurs/dashboard/widgets/agencies_tab.dart';
 import 'package:dashboard/featurs/dashboard/widgets/family_tab.dart';
 import 'package:dashboard/featurs/dashboard/widgets/user_tab.dart';
@@ -25,6 +26,7 @@ class DashBoardViewBody extends StatelessWidget {
         Center(child: Text('Tab 7 Content')),
         Center(child: Text('Tab 8 Content')),
         BadgeDetailsView(),
+        StoreDetailsView(),
       ],
     );
   }
