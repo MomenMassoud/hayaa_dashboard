@@ -20,7 +20,7 @@ class EditBadgeBody extends StatefulWidget{
   _EditBadgeBody createState()=>_EditBadgeBody();
 }
 
-
+enum target { gift, coin,daimond }
 class _EditBadgeBody extends State<EditBadgeBody>{
   final FirebaseStorage _storage=FirebaseStorage.instance;
   final FirebaseAuth _auth=FirebaseAuth.instance;
@@ -35,6 +35,7 @@ class _EditBadgeBody extends State<EditBadgeBody>{
   TextEditingController _name=TextEditingController();
   TextEditingController _count=TextEditingController();
   late GiftModel selectedGift;
+  target gender = target.gift;
   @override
   void initState() {
     // TODO: implement initState
@@ -66,6 +67,8 @@ class _EditBadgeBody extends State<EditBadgeBody>{
                 giftType: massege.get("type"),
                 giftImage: massege.get("photo"),
                 giftDoc: massege.id,
+                create: massege.get('create'),
+                allow: massege.get('allow'),
               ),
             );
           }
@@ -124,40 +127,180 @@ class _EditBadgeBody extends State<EditBadgeBody>{
               const SizedBox(
                 height: 10,
               ),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: gifts.length,
-                  itemBuilder: (context,index){
-                    return Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: InkWell(
-                        onTap: (){
-                          selectedGift=gifts[index];
-                          Allarm(gifts[index].giftName);
-                        },
-                        child: Column(
-                          children: [
-                            gifts[index].giftType=="svga"?CircleAvatar(
-                              radius: 32,
-                              child: SVGASimpleImage(
-                                resUrl: gifts[index].giftImage,
-                              ),
-                            )
-                                : CachedNetworkImage(
-                              imageUrl: gifts[index].giftImage,
-                              width: 50,
+              widget.badge.giftphoto!="send coin" && widget.badge.giftphoto!="receve daimond" && gender.toString()=="target.gift"?Column(
+                children: [
+                  Container(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: gifts.length,
+                      itemBuilder: (context,index){
+                        return Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: InkWell(
+                            onTap: (){
+                              selectedGift=gifts[index];
+                              Allarm();
+                            },
+                            child: Column(
+                              children: [
+                                gifts[index].giftType=="svga"?CircleAvatar(
+                                  radius: 32,
+                                  child: SVGASimpleImage(
+                                    resUrl: gifts[index].giftImage,
+                                  ),
+                                )
+                                    : CachedNetworkImage(
+                                  imageUrl: gifts[index].giftImage,
+                                  width: 50,
+                                ),
+                                SizedBox(height: 30,),
+                                Text(gifts[index].giftName),
+                              ],
                             ),
-                            SizedBox(height: 30,),
-                            Text(gifts[index].giftName),
-                          ],
-                        ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text("Choose Type Of Target",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.coin,
+                            hoverColor: Colors.black,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text("Coin",)
+                        ],
                       ),
-                    );
-                  },
-                ),
-              )
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.daimond,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Daimond'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.gift,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Gift'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ):Column(
+                children: [
+                  Text(widget.badge.giftphoto),
+                  Row(
+                    children: [
+                      Text("Choose Type Of Target",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.coin,
+                            hoverColor: Colors.black,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text("Coin",)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.daimond,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Daimond'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.gift,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Gift'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  gender.toString()=="target.gift"?Container(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: gifts.length,
+                      itemBuilder: (context,index){
+                        return Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: InkWell(
+                            onTap: (){
+                              selectedGift=gifts[index];
+                              Allarm();
+                            },
+                            child: Column(
+                              children: [
+                                gifts[index].giftType=="svga"?CircleAvatar(
+                                  radius: 32,
+                                  child: SVGASimpleImage(
+                                    resUrl: gifts[index].giftImage,
+                                  ),
+                                )
+                                    : CachedNetworkImage(
+                                  imageUrl: gifts[index].giftImage,
+                                  width: 50,
+                                ),
+                                SizedBox(height: 30,),
+                                Text(gifts[index].giftName),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ):ElevatedButton(onPressed: (){
+                    Allarm();
+                  }, child: Text("Edit Badge"))
+                ],
+              ),
             ],
           );
         },
@@ -186,7 +329,7 @@ class _EditBadgeBody extends State<EditBadgeBody>{
       reader.readAsDataUrl(file);
     });
   }
-  void Allarm(String Name) {
+  void Allarm() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -196,8 +339,6 @@ class _EditBadgeBody extends State<EditBadgeBody>{
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Are Your Sure Select Target Gift($Name)"),
-                  SizedBox(height: 10,),
                   ElevatedButton(onPressed: ()async{
                     setState(() {
                       _show=true;
@@ -213,15 +354,17 @@ class _EditBadgeBody extends State<EditBadgeBody>{
                       String docs="${DateTime.now().toString()}-${_auth.currentUser!.uid}";
                       _firestore.collection('badges').doc(widget.badge.doc).update({
                         'count':_count.text.toString(),
-                        'gift':selectedGift.giftDoc,
-                        'giftphoto':selectedGift.giftImage,
+                        'gift':gender.toString()=="target.gift"?selectedGift.giftDoc:
+                        gender.toString()=="target.coin"?"":"",
+                        'giftphoto':gender.toString()=="target.gift"?selectedGift.giftImage:
+                        gender.toString()=="target.coin"?"send coin":"receve daimond",
                         'name':_name.text,
                         'photo':urlDownload,
                       }).then((value){
                         _firestore.collection('badges').doc(widget.badge.doc).collection('history').doc(DateTime.now().toString()).set({
                           'email':_auth.currentUser!.email,
                           'id':'false',
-                          'gift': widget.badge.gift==selectedGift.giftDoc?'false':'true',
+                          'gift': widget.badge.gift==gender.toString()?'false':'true',
                           'photo':_bytesData==null?'false':'true',
                           'name':widget.badge.Name==_name.text?'false':'true',
                           'target':widget.badge.count==_count.text.toString()?'false':'true',
@@ -239,7 +382,7 @@ class _EditBadgeBody extends State<EditBadgeBody>{
                       _firestore.collection('badges').doc(widget.badge.doc).collection('history').doc(DateTime.now().toString()).set({
                         'email':_auth.currentUser!.email,
                         'id':'false',
-                        'gift': widget.badge.gift==selectedGift.giftDoc?'false':'true',
+                        'gift': widget.badge.gift==gender.toString()?'false':'true',
                         'photo':_bytesData==null?'false':'true',
                         'name':widget.badge.Name==_name.text?'false':'true',
                         'target':widget.badge.count==_count.text.toString()?'false':'true',
@@ -247,8 +390,9 @@ class _EditBadgeBody extends State<EditBadgeBody>{
                       }).then((value){
                         _firestore.collection('badges').doc(widget.badge.doc).update({
                           'count':_count.text.toString(),
-                          'gift':selectedGift.giftDoc,
-                          'giftphoto':selectedGift.giftImage,
+                          'gift':gender.toString()=="target.gift"?selectedGift.giftDoc:'',
+                          'giftphoto':gender.toString()=="target.gift"?selectedGift.giftImage:
+                          gender.toString()=="target.coin"?"send coin":"receve daimond",
                           'name':_name.text,
                         }).then((value){
                           setState(() {

@@ -132,7 +132,7 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
                     width: screenWidth * 0.125,
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text("Gift Photo",
+                      child: Text("Target",
                           style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold)),
@@ -143,7 +143,7 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
                     width: screenWidth * 0.125,
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text("Count of Gift",
+                      child: Text("Count",
                           style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold)),
@@ -255,7 +255,8 @@ class BadgeListViewItem extends StatelessWidget {
               width: screenWidth * 0.1,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Image.network(badgeModel.giftphoto,scale: 4,),
+                child:badgeModel.giftphoto!="send coin" && badgeModel.giftphoto!="receve daimond"? Image.network(badgeModel.giftphoto,scale: 4,):
+                Text(badgeModel.giftphoto),
 
               ),
             ),

@@ -1,9 +1,13 @@
 import 'package:dashboard/featurs/dashboard/models/gift_model.dart';
+import 'package:dashboard/featurs/dashboard/views/edit_gift_view.dart';
+import 'package:dashboard/featurs/dashboard/views/history_gift_view.dart';
+import 'package:dashboard/featurs/details_screen/view/add_new_gift_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 
 class GiftsTab extends StatefulWidget {
   const GiftsTab({
@@ -14,11 +18,26 @@ class GiftsTab extends StatefulWidget {
   State<GiftsTab> createState() => _GiftsTabState();
 }
 
-class _GiftsTabState extends State<GiftsTab> {
+class _GiftsTabState extends State<GiftsTab>with SingleTickerProviderStateMixin {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late SVGAAnimationController animationController;
   String value = "";
   String keySearch = "name";
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    this.animationController = SVGAAnimationController(vsync: this);
+  }
+  void loadAnimation(String url) async {
+    final videoItem = await SVGAParser.shared.decodeFromURL(
+       url);
+    this.animationController.videoItem = videoItem;
+    this
+        .animationController
+        .repeat() // Try to use .forward() .reverse()
+        .whenComplete(() => this.animationController.videoItem = null);
+  }
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -47,6 +66,8 @@ class _GiftsTabState extends State<GiftsTab> {
                 giftType: massege.get("type"),
                 giftImage: massege.get("photo"),
                 giftDoc: massege.id,
+                allow: massege.get('allow'),
+                create: massege.get('creat')
               ),
             );
           }
@@ -168,6 +189,22 @@ class _GiftsTabState extends State<GiftsTab> {
                       width: screenWidth * 0.1,
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
+                        child: Text("Created By"),
+                      ),
+                    ),
+                    const Text("|"),
+                    SizedBox(
+                      width: screenWidth * 0.1,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Active"),
+                      ),
+                    ),
+                    const Text("|"),
+                    SizedBox(
+                      width: screenWidth * 0.1,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text("Action"),
                       ),
                     ),
@@ -179,7 +216,13 @@ class _GiftsTabState extends State<GiftsTab> {
                     itemBuilder: (context, index) {
                       return GiftListViewItem(
                         giftModel: gifts[index],
-                        onTap: () {},
+                        animationController: this.animationController,
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HistoryGiftView(gifts[index])));
+                        },
                       );
                     },
                   ),
@@ -193,7 +236,12 @@ class _GiftsTabState extends State<GiftsTab> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddNewGiftView()));
+                        },
                         child: const Text(
                           "Add Gift",
                           style: TextStyle(color: Colors.white),
@@ -226,12 +274,14 @@ class GiftListViewItem extends StatelessWidget {
     super.key,
     this.onTap,
     required this.giftModel,
+    required this.animationController,
   });
   final GiftModel giftModel;
+  final SVGAAnimationController animationController;
   final void Function()? onTap;
-
   @override
   Widget build(BuildContext context) {
+    loadAnimation(giftModel.giftImage);
     final double screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: onTap,
@@ -273,10 +323,34 @@ class GiftListViewItem extends StatelessWidget {
               width: screenWidth * 0.1,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CachedNetworkImage(
+                child: giftModel.giftType!="svga"?CachedNetworkImage(
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
-                    imageUrl: giftModel.giftImage),
+                    imageUrl: giftModel.giftImage):Container(
+                  child: SVGAImage(this.animationController),
+                )
+              ),
+            ),
+            const Text("|"),
+            SizedBox(
+              width: screenWidth * 0.125,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  giftModel.create,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            const Text("|"),
+            SizedBox(
+              width: screenWidth * 0.125,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  giftModel.allow,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             const Text("|"),
@@ -285,7 +359,12 @@ class GiftListViewItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child:InkWell(
-                  onTap: (){},
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditGiftView(giftModel)));
+                  },
                   child: Text("Edit",style: TextStyle(color: Colors.blue),),
                 ),
               ),
@@ -294,5 +373,14 @@ class GiftListViewItem extends StatelessWidget {
         ),
       ),
     );
+  }
+  void loadAnimation(String url) async {
+    final videoItem = await SVGAParser.shared.decodeFromURL(
+        url);
+    this.animationController.videoItem = videoItem;
+    this
+        .animationController
+        .repeat() // Try to use .forward() .reverse()
+        .whenComplete(() => this.animationController.videoItem = null);
   }
 }

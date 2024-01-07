@@ -131,7 +131,7 @@ class _HistoryBadgesBody extends State<HistoryBadgesBody>{
                         DataColumn(label: SizedBox(
                           height: screenHeight * 0.08,
                           child: Center(
-                            child: Text('Gift',
+                            child: Text('Target',
                                 style: TextStyle(fontSize: screenWidth * 0.015,color: Colors.green)
                             ),
                           ),
@@ -155,7 +155,7 @@ class _HistoryBadgesBody extends State<HistoryBadgesBody>{
                         DataColumn(label: SizedBox(
                           height: screenHeight * 0.08,
                           child: Center(
-                            child: Text('Target',
+                            child: Text('Count',
                                 style: TextStyle(fontSize: screenWidth * 0.015,color: Colors.blue)
                             ),
                           ),
@@ -339,9 +339,9 @@ class _HistoryBadgesBody extends State<HistoryBadgesBody>{
     CellValue id=TextCellValue("ID");
     CellValue name=TextCellValue("Name");
     CellValue date=TextCellValue("Date");
-    CellValue gift=TextCellValue("Gift");
+    CellValue gift=TextCellValue("Target");
     CellValue photo=TextCellValue("Photo");
-    CellValue target=TextCellValue("Target");
+    CellValue target=TextCellValue("count");
     List<CellValue> head=[email,id,name,date,gift,photo,target];
     sheet.appendRow(head);
     for(int i=0;i<rows.length;i++){

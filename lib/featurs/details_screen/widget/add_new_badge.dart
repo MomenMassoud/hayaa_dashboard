@@ -18,7 +18,7 @@ class AddNewBadge extends StatefulWidget{
   _AddNewBadge createState()=>_AddNewBadge();
 }
 
-
+enum target { gift, coin,daimond }
 class _AddNewBadge extends State<AddNewBadge>{
   final FirebaseFirestore _firestore=FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -33,6 +33,7 @@ class _AddNewBadge extends State<AddNewBadge>{
   TextEditingController _name=TextEditingController();
   TextEditingController _count=TextEditingController();
   late GiftModel selectedGift;
+  target gender = target.coin;
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -59,6 +60,8 @@ class _AddNewBadge extends State<AddNewBadge>{
                     giftType: massege.get("type"),
                     giftImage: massege.get("photo"),
                     giftDoc: massege.id,
+                    allow: massege.get('allow'),
+                    create: massege.get('creat')
                   ),
                 );
               }
@@ -117,7 +120,55 @@ class _AddNewBadge extends State<AddNewBadge>{
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
+                  Row(
+                    children: [
+                      Text("Choose Type Of Target",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.coin,
+                            hoverColor: Colors.black,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text("Coin",)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.daimond,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Daimond'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: target.gift,
+                            groupValue: gender,
+                            onChanged: (target? g) {
+                              setState(() {
+                                gender = g!;
+                              });
+                            },
+                          ),
+                          Text('Gift'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  gender.toString()=="target.gift"?Container(
                     height: 200,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -150,7 +201,9 @@ class _AddNewBadge extends State<AddNewBadge>{
                         );
                       },
                     ),
-                  )
+                  ):ElevatedButton(onPressed: (){
+                    Allarm2();
+                  }, child: Text("Add Badge"))
                 ],
               );
             }
@@ -211,7 +264,8 @@ class _AddNewBadge extends State<AddNewBadge>{
                       'name':_name.text,
                       'photo':urlDownload,
                       'id':idd,
-                      'CreatedBy':_auth.currentUser!.email
+                      'CreatedBy':_auth.currentUser!.email,
+                      'date':''
                     }).then((value){
                       setState(() {
                         _show=false;
@@ -229,5 +283,52 @@ class _AddNewBadge extends State<AddNewBadge>{
           );
         });
   }
-  
+  void Allarm2() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Add New Badge"),
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(onPressed: ()async{
+                    setState(() {
+                      _show=true;
+                    });
+                    String idd="";
+                    for(int i=0;i<8;i++){
+                      int randomNumber = random.nextInt(10);
+                      idd="$idd$randomNumber";
+                    }
+                    final uploadTask=await FirebaseStorage.instance.ref('Badges/${_name.text}').putData(_bytesData!);
+                    final urlDownload = await uploadTask.ref.getDownloadURL();
+                    String docs="${DateTime.now().toString()}-${_auth.currentUser!.uid}";
+                    _firestore.collection('badges').doc(docs).set({
+                      'count':_count.text.toString(),
+                      'gift':'',
+                      'giftphoto':gender.toString()=='target.coin'?"send coin":"receve daimond",
+                      'name':_name.text,
+                      'photo':urlDownload,
+                      'id':idd,
+                      'CreatedBy':_auth.currentUser!.email,
+                      'date':''
+                    }).then((value){
+                      setState(() {
+                        _show=false;
+                      });
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
+                  }, child: Text("Yes")),
+                  SizedBox(height: 10,),
+                  ElevatedButton(onPressed: (){
+                    Navigator.pop(context);
+                  }, child: Text("No"))
+                ],
+              )
+          );
+        });
+  }
 }
