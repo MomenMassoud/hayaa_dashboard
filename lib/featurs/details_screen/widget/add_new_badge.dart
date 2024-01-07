@@ -210,7 +210,8 @@ class _AddNewBadge extends State<AddNewBadge>{
                       'giftphoto':selectedGift.giftImage,
                       'name':_name.text,
                       'photo':urlDownload,
-                      'id':idd
+                      'id':idd,
+                      'CreatedBy':_auth.currentUser!.email
                     }).then((value){
                       setState(() {
                         _show=false;

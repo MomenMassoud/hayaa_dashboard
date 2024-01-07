@@ -4,11 +4,11 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dashboard/featurs/dashboard/models/badge_model.dart';
+import 'package:dashboard/featurs/dashboard/views/edit_badge_view.dart';
+import 'package:dashboard/featurs/dashboard/views/history_badges_view.dart';
+import 'package:dashboard/featurs/dashboard/views/send_badge_toUser_view.dart';
 import 'package:flutter/material.dart';
 import '../../details_screen/widget/add_new_badge.dart';
-import '../../tools/custom_photo_card.dart';
-import 'dart:html' as html;
-import 'dart:convert';
 class BadgeDetailsBody extends StatefulWidget{
   _BadgeDetailsBody createState()=>_BadgeDetailsBody();
 }
@@ -20,10 +20,6 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
   bool showPickedFile = false;
   Random random = new Random();
   Uint8List some =Uint8List(8);
-  List<int>? _selectedFile;
-  Uint8List? _bytesData;
-  TextEditingController _name=TextEditingController();
-  TextEditingController _count=TextEditingController();
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -44,7 +40,8 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
             BadgeModel(count: massege.get('count'),
                 id: massege.get('id'),
                 gift: massege.get('gift'), photo: massege.get('photo'),
-                Name: massege.get('name'), doc: massege.id,giftphoto: massege.get('giftphoto'))
+                Name: massege.get('name'), doc: massege.id,giftphoto: massege.get('giftphoto'),created: massege.get('CreatedBy'),
+                date: massege.get('date'))
           );
         }
         return Padding(
@@ -157,6 +154,17 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
                     width: screenWidth * 0.125,
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
+                      child: Text("Created By",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const Text("|"),
+                  SizedBox(
+                    width: screenWidth * 0.125,
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text("Action",
                           style: TextStyle(
                               color: Colors.red,
@@ -171,6 +179,14 @@ class _BadgeDetailsBody extends State<BadgeDetailsBody>{
                   itemBuilder: (context, index) {
                     return BadgeListViewItem(
                       badgeModel: badges[index],
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HistoryBadgesView(
+                                  badges[index],
+                                )));
+                      },
                     );
                   },
                 ),
@@ -256,18 +272,38 @@ class BadgeListViewItem extends StatelessWidget {
               width: screenWidth * 0.1,
               child: Padding(
                   padding: const EdgeInsets.all(8.0),
+                  child: Text(badgeModel.created)
+              ),
+            ),
+            const Text("|"),
+            SizedBox(
+              width: screenWidth * 0.1,
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
                         onTap: (){
-
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditBadgeView(
+                                    badgeModel,
+                                  )));
                         },
                           child: Text("Edit",style: TextStyle(color: Colors.blue),)),
 
                       InkWell(
-                          onTap:(){},
-                          child: Text("Send to User",style: TextStyle(color: Colors.blue),))
+                          onTap:(){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SendBadgeToUserView(
+                                      badgeModel,
+                                    )));
+                          },
+                          child: Text("Send to User",style: TextStyle(color: Colors.blue),)),
                     ],
                   )
               ),

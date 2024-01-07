@@ -44,6 +44,7 @@ dependencies:
   firebase_storage: ^11.0.16
   svgaplayer_flutter: ^2.2.0
   modal_progress_hud_nsn: ^0.4.0
+  excel: ^4.0.2
 
 dev_dependencies:
   flutter_test:

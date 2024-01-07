@@ -163,6 +163,14 @@ class _GiftsTabState extends State<GiftsTab> {
                         child: Text("Gift Image"),
                       ),
                     ),
+                    const Text("|"),
+                    SizedBox(
+                      width: screenWidth * 0.1,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Action"),
+                      ),
+                    ),
                   ],
                 ),
                 Expanded(
@@ -269,6 +277,17 @@ class GiftListViewItem extends StatelessWidget {
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
                     imageUrl: giftModel.giftImage),
+              ),
+            ),
+            const Text("|"),
+            SizedBox(
+              width: screenWidth * 0.125,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:InkWell(
+                  onTap: (){},
+                  child: Text("Edit",style: TextStyle(color: Colors.blue),),
+                ),
               ),
             ),
           ],
